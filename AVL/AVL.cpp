@@ -2,20 +2,22 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
+#include "../item.cpp"
 using namespace std;
 
-template <typename T>
 class AVLTree
 {
 private:
+
+    bool (*lessCompare)(const item&, const item&);
     struct Node
     {
-        T data;
+        item data;
         Node *parent;
         Node *left;
         Node *right;
         unsigned int height;
-        Node(const T &value)
+        Node(const item &value)
         {
             data = value;
             parent = nullptr;
@@ -84,24 +86,24 @@ private:
         setHeight(newRoot);
     }
 
-    Node *findNode(Node *node, const T &value)
+    Node *findNode(Node *node, const item &value)
     {
         if (node == nullptr)
             return nullptr;
-        if (value < node->data)
+        if (lessCompare(value, node->data))
         {
             return findNode(node->left, value);
         }
-        if (node->data < value)
+        if (lessCompare(node->data, value))
         {
             return findNode(node->right, value);
         }
         return node;
     }
 
-    Node *findParent(Node *node, const T &value)
+    Node *findParent(Node *node, const item &value)
     {
-        if (value < node->data)
+        if (lessCompare(value, node->data))
         {
             if (node->left == nullptr)
                 return node;
@@ -114,7 +116,7 @@ private:
         return node;
     }
 
-    Node *insertNode(const T &value)
+    Node *insertNode(const item &value)
     {
         Node *newNode = new Node(value);
 
@@ -125,7 +127,7 @@ private:
         }
         Node *parent = findParent(root, value);
         newNode->parent = parent;
-        if (value < parent->data)
+        if (lessCompare(value, parent->data))
             parent->left = newNode;
         else
             parent->right = newNode;
@@ -185,55 +187,23 @@ private:
         return false;
     }
 
-    int printNode(Node *node, int offset, int depth, std::vector<std::string> &output)
-    {
-        if (!node)
-            return 0;
-
-        bool is_left = (node->parent && node->parent->left == node);
-        std::stringstream ss;
-        ss << "(" << std::setw(3) << std::setfill('0') << node->data << ")";
-
-        std::string data_str = ss.str();
-        int width = data_str.length();
-
-        int left = printNode(node->left, offset, depth + 1, output);
-        int right = printNode(node->right, offset + left + width, depth + 1, output);
-
-        for (int i = 0; i < width; i++)
-            output[depth][offset + left + i] = data_str[i];
-
-        if (depth && is_left)
-        {
-            for (int i = 0; i < width + right; i++)
-                output[depth - 1][offset + left + width / 2 + i] = '-';
-            output[depth - 1][offset + left + width / 2] = '.';
-        }
-        else if (depth && !is_left)
-        {
-            for (int i = 0; i < left + width; i++)
-                output[depth - 1][offset - width / 2 + i] = '-';
-            output[depth - 1][offset + left + width / 2] = '.';
-        }
-        return left + width + right;
-    }
-
     void printInOrder(Node *node)
     {
         if (node == nullptr)
             return;
         printInOrder(node->left);
-        std::cout << node->data << " ";
+        node->data.print();
         printInOrder(node->right);
     }
 
 public:
-    AVLTree()
+    AVLTree(bool (*lessCompare)(const item&, const item&))
     {
+        this->lessCompare = lessCompare;
         root = nullptr;
     }
 
-    void insert(const T &value)
+    void insert(const item &value)
     {
         Node *newNode = insertNode(value);
         int balance;
@@ -248,7 +218,7 @@ public:
         }
     }
 
-    void remove(const T &value)
+    void remove(const item &value)
     {
         Node *node = findNode(root, value);
         if (node == nullptr)
@@ -262,71 +232,9 @@ public:
         }
     }
 
-    void printTree()
-    {
-        if (!root)
-        {
-            std::cout << "Empty tree" << std::endl;
-            return;
-        }
-
-        int height = root->height;
-        std::vector<std::string> output(height, std::string(255, ' '));
-        printNode(root, 0, 0, output);
-
-        for (const std::string &line : output)
-        {
-            std::cout << line.substr(0, line.find_last_not_of(' ') + 1) << std::endl;
-        }
-        cout << endl;
-    }
-
     void print()
     {
         printInOrder(root);
         std::cout << std::endl;
     }
 };
-
-int main()
-{
-    AVLTree<int> tree;
-    tree.insert(10);
-    tree.printTree();
-    tree.insert(20);
-    tree.printTree();
-    tree.insert(20);
-    tree.printTree();
-    tree.insert(20);
-    tree.printTree();
-    tree.insert(20);
-    tree.printTree();
-    tree.insert(20);
-    tree.printTree();
-    tree.remove(20);
-    tree.printTree();
-    tree.insert(30);
-    tree.printTree();
-    tree.insert(15);
-    tree.printTree();
-    tree.insert(25);
-    tree.printTree();
-    tree.insert(5);
-    tree.printTree();
-    tree.insert(35);
-    tree.printTree();
-    tree.insert(40);
-    tree.printTree();
-    tree.insert(45);
-    tree.printTree();
-    tree.remove(25);
-    tree.printTree();
-    tree.remove(20);
-    tree.printTree();
-    tree.remove(30);
-    tree.printTree();
-    tree.remove(35);
-    tree.printTree();
-    tree.print();
-    return 0;
-}

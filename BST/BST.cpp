@@ -1,13 +1,15 @@
 #include <bits/stdc++.h>
+#include "../item.cpp"
 using namespace std;
-template <typename T>
+
 class BST
 {
+    bool (*lessCompare)(const item&, const item&);
     struct Node
     {
-        T data;
+        item data;
         Node *left, *right;
-        Node(const T &value)
+        Node(const item &value)
         {
             data = value;
             left = nullptr;
@@ -17,7 +19,7 @@ class BST
 
     Node *Root = nullptr;
 
-    Node *insert(Node *cur, T data)
+    Node *insert(Node *cur, const item &data)
     {
         if (cur == nullptr)
         {
@@ -26,22 +28,22 @@ class BST
                 Root = cur;
             return cur;
         }
-        if (cur->data < data)
+        if (lessCompare(cur->data , data))
             cur->right = insert(cur->right, data);
         else
             cur->left = insert(cur->left, data);
         return cur;
     }
 
-    int remove(Node *&cur, const T &data)
+    int remove(Node *&cur, const item &data)
     {
         if (cur == nullptr)
         {
             return -1;
         }
-        if (data < cur->data)
+        if (lessCompare(data, cur->data))
             return remove(cur->left, data);
-        else if (data > cur->data)
+        if (lessCompare(cur->data, data))
             return remove(cur->right, data);
         else
         {
@@ -76,53 +78,51 @@ class BST
         }
     }
 
-    bool search(Node *cur, const T &data)
+    bool search(Node *cur, const item &data)
     {
         if (cur == nullptr)
         {
             return false;
         }
-        if (cur->data == data)
-        {
-            return true;
-        }
-        if (cur->data > data)
+        if (lessCompare(data, cur->data))
             return search(cur->left, data);
-        else
+        if (lessCompare(cur->data, data))
             return search(cur->right, data);
+        return true;
+    }
+
+    void inOrder(Node *cur)
+    {
+        if (cur == nullptr)
+            return;
+        inOrder(cur->left);
+        cur->data.print();
+        inOrder(cur->right);
     }
 
 public:
-    void insert(const T &data)
+    BST(bool (*lessCompare)(const item&, const item&))
+    {
+        this->lessCompare = lessCompare;
+    }
+    void insert(const item &data)
     {
         insert(Root, data);
     }
     
-    int remove(const T &data)
+    int remove(const item &data)
     {
         return remove(Root, data);
     }
 
-    bool search(const T &data)
+    bool search(const item &data)
     {
         return search(Root, data);
     }
+
+    void print()
+    {
+        inOrder(Root);
+    }
     // to be done: Displays
 };
-
-int main()
-{
-    BST<int> b;
-    b.insert(8);
-    b.insert(11);
-    b.insert(283);
-    cout << b.remove(283) << '\n';
-    cout << b.remove(2863) << '\n';
-    cout << boolalpha << b.search(8) << '\n'
-         << b.search(11) << '\n'
-         << b.search(283) << '\n'
-         << b.search(14);
-    BST<array<int, 5>> c;
-    c.insert({1, 2, 3, 4, 6});
-    cout << c.search({1, 2, 3, 4, 6}) << ' ' << c.search({2, 3}) << '\n';
-}
