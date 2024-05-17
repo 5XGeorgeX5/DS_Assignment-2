@@ -42,7 +42,7 @@ private:
         return getHeight(node->left) - getHeight(node->right);
     }
 
-    Node *leftRotate(Node *node)
+    void leftRotate(Node *node)
     {
         Node *newRoot = node->right;
         Node *newRight = newRoot->left;
@@ -61,10 +61,9 @@ private:
         node->parent = newRoot;
         setHeight(node);
         setHeight(newRoot);
-        return newRoot;
     }
 
-    Node *rightRotate(Node *node)
+    void rightRotate(Node *node)
     {
         Node *newRoot = node->left;
         Node *newLeft = newRoot->right;
@@ -83,18 +82,34 @@ private:
         node->parent = newRoot;
         setHeight(node);
         setHeight(newRoot);
-        return newRoot;
     }
 
     Node *findNode(Node *node, const T &value)
     {
-        if (value < node->data && node->left != nullptr)
+        if (node == nullptr)
+            return nullptr;
+        if (value < node->data)
         {
             return findNode(node->left, value);
         }
-        if (node->data < value && node->right != nullptr)
+        if (node->data < value)
         {
             return findNode(node->right, value);
+        }
+        return node;
+    }
+
+    Node *findParent(Node *node, const T &value)
+    {
+        if (value < node->data)
+        {
+            if (node->left == nullptr)
+                return node;
+            return findParent(node->left, value);
+        }
+        if (node->right != nullptr)
+        {
+            return findParent(node->right, value);
         }
         return node;
     }
@@ -108,7 +123,7 @@ private:
             root = newNode;
             return root;
         }
-        Node *parent = findNode(root, value);
+        Node *parent = findParent(root, value);
         newNode->parent = parent;
         if (value < parent->data)
             parent->left = newNode;
@@ -236,7 +251,7 @@ public:
     void remove(const T &value)
     {
         Node *node = findNode(root, value);
-        if (node->data != value)
+        if (node == nullptr)
             return;
         Node *replacement = deleteNode(node);
         while (replacement)
@@ -279,6 +294,16 @@ int main()
     tree.insert(10);
     tree.printTree();
     tree.insert(20);
+    tree.printTree();
+    tree.insert(20);
+    tree.printTree();
+    tree.insert(20);
+    tree.printTree();
+    tree.insert(20);
+    tree.printTree();
+    tree.insert(20);
+    tree.printTree();
+    tree.remove(20);
     tree.printTree();
     tree.insert(30);
     tree.printTree();
