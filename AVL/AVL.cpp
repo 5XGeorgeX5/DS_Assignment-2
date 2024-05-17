@@ -5,7 +5,7 @@
 #include "../item.cpp"
 using namespace std;
 
-class AVLTree
+class AVL
 {
 private:
 
@@ -196,8 +196,17 @@ private:
         printInOrder(node->right);
     }
 
+    void printInOrderRight(Node *node)
+    {
+        if (node == nullptr)
+            return;
+        printInOrderRight(node->right);
+        node->data.print();
+        printInOrderRight(node->left);
+    }
+
 public:
-    AVLTree(bool (*lessCompare)(const item&, const item&))
+    AVL(bool (*lessCompare)(const item&, const item&))
     {
         this->lessCompare = lessCompare;
         root = nullptr;
@@ -232,9 +241,15 @@ public:
         }
     }
 
-    void print()
+    void printAscending()
     {
         printInOrder(root);
+        std::cout << std::endl;
+    }
+
+    void printDescending()
+    {
+        printInOrderRight(root);
         std::cout << std::endl;
     }
 };

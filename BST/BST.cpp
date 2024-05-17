@@ -91,13 +91,22 @@ class BST
         return true;
     }
 
-    void inOrder(Node *cur)
+    void printInOrder(Node *node)
     {
-        if (cur == nullptr)
+        if (node == nullptr)
             return;
-        inOrder(cur->left);
-        cur->data.print();
-        inOrder(cur->right);
+        printInOrder(node->left);
+        node->data.print();
+        printInOrder(node->right);
+    }
+
+    void printInOrderRight(Node *node)
+    {
+        if (node == nullptr)
+            return;
+        printInOrderRight(node->right);
+        node->data.print();
+        printInOrderRight(node->left);
     }
 
 public:
@@ -120,9 +129,15 @@ public:
         return search(Root, data);
     }
 
-    void print()
+    void printAscending()
     {
-        inOrder(Root);
+        printInOrder(Root);
+        std::cout << std::endl;
     }
-    // to be done: Displays
+
+    void printDescending()
+    {
+        printInOrderRight(Root);
+        std::cout << std::endl;
+    }
 };
