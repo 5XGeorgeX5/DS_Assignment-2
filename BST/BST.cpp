@@ -47,6 +47,7 @@ class BST
             return remove(cur->right, data);
         else
         {
+            if(cur->data.getPrice() != data.getPrice() || cur->data.getItemname() != data.getItemname() || cur->data.getCategory() != data.getCategory()) return 0;
             if (cur->left == nullptr && cur->right == nullptr)
             {
                 delete cur;
