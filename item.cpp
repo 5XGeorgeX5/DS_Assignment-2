@@ -22,6 +22,9 @@ class item {
     bool operator<(const item& other) {
         return price < other.price;
     }
+    bool operator!=(const item& other) const {
+        return (itemname != other.itemname) || (category != other.category) || (price != other.price);
+    }
     void print() const {
         cout << "Item: " << itemname << ", Category: " << category << ", Price: " << price << "\n";
     }

@@ -28,10 +28,10 @@ class BST
                 Root = cur;
             return cur;
         }
-        if (lessCompare(cur->data , data))
-            cur->right = insert(cur->right, data);
+        if (lessCompare(data, cur->data))
+            cur->left = insert(cur->left, data); 
         else
-            cur->left = insert(cur->left, data);
+            cur->right = insert(cur->right, data);
         return cur;
     }
 
@@ -43,11 +43,10 @@ class BST
         }
         if (lessCompare(data, cur->data))
             return remove(cur->left, data);
-        if (lessCompare(cur->data, data))
+        if (lessCompare(cur->data, data) || cur->data != data)
             return remove(cur->right, data);
         else
         {
-            if(cur->data.getPrice() != data.getPrice() || cur->data.getItemname() != data.getItemname() || cur->data.getCategory() != data.getCategory()) return 0;
             if (cur->left == nullptr && cur->right == nullptr)
             {
                 delete cur;
@@ -87,7 +86,7 @@ class BST
         }
         if (lessCompare(data, cur->data))
             return search(cur->left, data);
-        if (lessCompare(cur->data, data))
+        if (lessCompare(cur->data, data) || cur->data != data)
             return search(cur->right, data);
         return true;
     }

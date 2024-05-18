@@ -94,7 +94,7 @@ private:
         {
             return findNode(node->left, value);
         }
-        if (lessCompare(node->data, value))
+        if (lessCompare(node->data, value) || node->data != value)
         {
             return findNode(node->right, value);
         }
@@ -232,7 +232,6 @@ public:
         Node *node = findNode(root, value);
         if (node == nullptr)
             return;
-        if(node->data.getPrice() != value.getPrice() || node->data.getItemname() != value.getItemname() || node->data.getCategory() != value.getCategory()) return;
         Node *replacement = deleteNode(node);
         while (replacement)
         {

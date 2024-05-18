@@ -2,6 +2,8 @@
 #include <cmath>
 #include "BST/BST.cpp"
 #include "AVL/AVL.cpp"
+#include "Heap/MaxHeap.cpp"
+#include "Heap/MinHeap.cpp"
 
 using namespace std;
 
@@ -44,26 +46,35 @@ void getData(T& priceTree, T& nameTree) {
 }
 int main() {
     int x = -1;
-    while(x != 1 && x != 2 && x != 3) {
+    while(x > 4 || x < 1) {
         cout << "\n";
         cout << "Choose which data structure to deal with:\n";
         cout << "1 - Binary Search Tree.\n";
         cout << "2 - AVL Tree.\n";
-        cout << "3 - Heap.\n";
+        cout << "3 - Max Heap.\n";
+        cout << "4 - Min Heap.\n";
         cin >> x;
-        if(x > 3 || x < 1) cout << "Choose a number between 1 and 3.\n";
+        if(x > 4 || x < 1) cout << "Choose a number between 1 and 4.\n";
     }
     BST bstPriceTree(lessPrice);
     BST bstNameTree(lessName);
     AVL avlPriceTree(lessPrice);
     AVL avlNameTree(lessName);
+    MaxHeap maxHeapPrice(lessPrice);
+    MaxHeap maxHeapName(lessName);
+    MinHeap minHeapPrice(lessPrice);
+    MinHeap minHeapName(lessName);
+
     if(x == 1) {
         getData(bstPriceTree, bstNameTree);
     } else if(x == 2) {
         getData(avlPriceTree, avlNameTree);
     } else if(x == 3) {
-        //TODO: Heap shit
+        getData(maxHeapPrice, maxHeapName);
+    } else if(x == 4) {
+        getData(minHeapPrice, minHeapName);
     }
+
     freopen("CON", "r", stdin);
     // for(item x: items) {
     //     x.print();
@@ -89,10 +100,11 @@ int main() {
         if(inp == 1) {
             string s, c;
             int p;
+            cin.ignore();
             cout << "Enter the name of the item: \n";
-            cin >> s;
+            getline(cin, s);
             cout << "Enter the category of the item: \n";
-            cin >> c;
+            getline(cin, c);
             cout << "Enter the price of the item: \n";
             cin >> p;
             items.push_back(item(s, c, p));
@@ -102,6 +114,12 @@ int main() {
             } else if(x == 2) {
                 avlNameTree.insert(item(s, c, p));
                 avlPriceTree.insert(item(s, c, p));
+            } else if(x == 3) {
+                maxHeapName.insert(item(s, c, p));
+                maxHeapPrice.insert(item(s, c, p));
+            } else if(x == 4) {
+                minHeapName.insert(item(s, c, p));
+                minHeapPrice.insert(item(s, c, p));
             }
             cout << "Item was added successfully.\n";
             inp = -1;
@@ -109,16 +127,18 @@ int main() {
         } else if(inp == 2) {
             string s, c;
             int p;
+            cin.ignore();
             cout << "Enter the name of the item: \n";
-            cin >> s;
+            getline(cin, s);
             cout << "Enter the category of the item: \n";
-            cin >> c;
+            getline(cin, c);
             cout << "Enter the price of the item: \n";
             cin >> p;
             bool done = false;
+            item temp(s, c, p);
             for(int i=0; i<items.size(); ++i) {
                 item x = items[i];
-                if(x.getPrice() == p && x.getCategory() == c && x.getItemname() == s) {
+                if(!(temp != x)) {
                     items.erase(items.begin() + i);
                     done = true;
                     cout << "Item was removed successfully.\n";
@@ -126,12 +146,20 @@ int main() {
                 }
             }
             if(!done) cout << "Item could not be found.\n";
-            if(x == 1) {
-                bstNameTree.remove(item(s, c, p));
-                bstPriceTree.remove(item(s, c, p));
-            } else if(x == 2) {
-                avlNameTree.remove(item(s, c, p));
-                avlPriceTree.remove(item(s, c, p));
+            else {
+                if(x == 1) {
+                    bstNameTree.remove(temp);
+                    bstPriceTree.remove(temp);
+                } else if(x == 2) {
+                    avlNameTree.remove(temp);
+                    avlPriceTree.remove(temp);
+                } else if(x == 3) {
+                    maxHeapName.remove(temp);
+                    maxHeapPrice.remove(temp);
+                } else if(x == 4) {
+                    minHeapName.remove(temp);
+                    minHeapPrice.remove(temp);
+                }
             }
             
             inp = -1;
@@ -140,6 +168,7 @@ int main() {
             for(int i=0; i<items.size(); ++i) {
                 items[i].print();
             }
+            cout << "\n";
             inp = -1;
             continue;
         } else if(inp == 4) {
@@ -147,7 +176,11 @@ int main() {
                 bstNameTree.printAscending();
             } else if(x == 2) {
                 avlNameTree.printAscending();
-            } 
+            } else if(x == 3) {
+                maxHeapName.printAscending();
+            } else if(x == 4) {
+                minHeapName.printAscending();
+            }
 
             inp = -1;
             continue;
@@ -156,7 +189,11 @@ int main() {
                 bstNameTree.printDescending();
             } else if(x == 2) {
                 avlNameTree.printDescending();
-            } 
+            } else if(x == 3) {
+                maxHeapName.printDescending();
+            } else if(x == 4) {
+                minHeapName.printDescending();
+            }
             inp = -1;
             continue;
         } else if(inp == 6) {
@@ -164,7 +201,11 @@ int main() {
                 bstPriceTree.printAscending();
             } else if(x == 2) {
                 avlPriceTree.printAscending();
-            } 
+            } else if(x == 3) {
+                maxHeapPrice.printAscending();
+            } else if(x == 4) {
+                minHeapPrice.printAscending();
+            }
             inp = -1;
             continue;
         } else if(inp == 7) {
@@ -172,7 +213,11 @@ int main() {
                 bstPriceTree.printDescending();
             } else if(x == 2) {
                 avlPriceTree.printDescending();
-            } 
+            } else if(x == 3) {
+                maxHeapPrice.printDescending();
+            } else if(x == 4) {
+                minHeapPrice.printDescending();
+            }
             inp = -1;
             continue;
         } else if(inp == 8) {
